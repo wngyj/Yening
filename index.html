@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>千凝 - 智能安卓自动化引擎 | 开发中</title>
+    <title>千凝 - 极简智能安卓自动化引擎</title>
     <style>
         :root {
             --bg-color: #0d0e12;
@@ -15,51 +15,110 @@
             --border-color: #2a2d35;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background-color: var(--bg-color); color: var(--text-main); line-height: 1.6; overflow-x: hidden; }
 
         .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
 
         nav { position: fixed; top: 0; width: 100%; padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; background: rgba(13, 14, 18, 0.8); backdrop-filter: blur(10px); z-index: 100; border-bottom: 1px solid var(--border-color); }
-        .logo { font-size: 24px; font-weight: 700; letter-spacing: 2px; color: var(--text-main); }
+        .logo { font-size: 24px; font-weight: 700; letter-spacing: 2px; background: linear-gradient(90deg, #fff, var(--text-muted)); -webkit-background-clip: text; color: transparent; }
 
         .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 100px 20px 50px; background: radial-gradient(circle at 50% -20%, #1a2035 0%, var(--bg-color) 70%); }
-        .hero h1 { font-size: clamp(40px, 5vw, 72px); font-weight: 800; margin-bottom: 20px; }
+        .hero h1 { font-size: clamp(40px, 5vw, 72px); font-weight: 800; line-height: 1.1; margin-bottom: 20px; }
         .highlight { color: var(--accent-color); text-shadow: 0 0 20px var(--accent-glow); }
+        .hero p { font-size: clamp(16px, 2vw, 20px); color: var(--text-muted); max-width: 600px; margin-bottom: 40px; }
         .cta-btn { display: inline-block; padding: 16px 40px; font-size: 16px; font-weight: 600; color: #000; background-color: var(--accent-color); border-radius: 30px; text-decoration: none; box-shadow: 0 0 20px var(--accent-glow); transition: all 0.3s ease; }
 
         .demo-section { padding: 80px 20px; display: flex; justify-content: center; align-items: center; }
         .phone-mockup { width: 300px; height: 600px; border-radius: 40px; background-color: #000; border: 10px solid #222; position: relative; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        .scanner-line { position: absolute; width: 100%; height: 2px; background: var(--accent-color); box-shadow: 0 0 15px 5px var(--accent-glow); animation: scanScreen 4s infinite ease-in-out; }
-        .target-img { width: 80px; height: 80px; background: #333; border-radius: 16px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border: 2px solid transparent; animation: targetHighlight 4s infinite ease-in-out; }
-        .click-ripple { position: absolute; top: 50%; left: 50%; width: 20px; height: 20px; background: rgba(255, 255, 255, 0.8); border-radius: 50%; animation: clickAction 4s infinite ease-in-out; }
+        .screen-content { padding: 20px; display: flex; flex-direction: column; gap: 15px; opacity: 0.5; }
+        .mock-item { width: 100%; height: 60px; background: #222; border-radius: 12px; }
+        .mock-item.short { width: 60%; }
 
-        @keyframes scanScreen { 0%, 10% { top: 10%; opacity: 0; } 45% { top: 52%; opacity: 1; } 50%, 100% { top: 52%; opacity: 0; } }
-        @keyframes targetHighlight { 0%, 40% { border-color: transparent; } 45%, 60% { border-color: var(--accent-color); box-shadow: 0 0 20px var(--accent-glow); } 100% { border-color: transparent; } }
-        @keyframes clickAction { 0%, 50% { transform: translate(-50%, -50%) scale(0); opacity: 0; } 52% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 58% { transform: translate(-50%, -50%) scale(4); opacity: 0; } }
+        .target-img { width: 80px; height: 80px; background: #333; border-radius: 16px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border: 2px solid transparent; animation: targetHighlight 3s infinite ease-in-out; }
+        .scanner-line { position: absolute; width: 100%; height: 2px; background: var(--accent-color); box-shadow: 0 0 15px 5px var(--accent-glow); top: 0; left: 0; z-index: 10; animation: scanScreen 3s infinite ease-in-out; }
+        .click-ripple { position: absolute; top: 50%; left: 50%; width: 40px; height: 40px; background: rgba(255, 255, 255, 0.8); border-radius: 50%; z-index: 20; transform: translate(-50%, -50%) scale(0); animation: clickAction 3s infinite ease-in-out; }
+
+        /* --- 修正后的动画代码 --- */
+        @keyframes scanScreen {
+            0% { top: 0%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+        @keyframes targetHighlight {
+            0%, 45% { border-color: transparent; }
+            50%, 60% { border-color: var(--accent-color); box-shadow: 0 0 20px var(--accent-glow); }
+            65%, 100% { border-color: transparent; }
+        }
+        @keyframes clickAction {
+            0%, 55% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            60% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            70% { transform: translate(-50%, -50%) scale(4); opacity: 0; }
+            100% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+        }
+        /* --- 动画代码结束 --- */
 
         .features { padding: 100px 5%; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; }
         .feature-card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 40px 30px; border-radius: 20px; }
+        footer { text-align: center; padding: 40px; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 14px; margin-top: 50px; }
+
+        /* 新增：用于放置QQ号的tooltip样式（只添加，不影响原有元素） */
+        .hero .reveal:last-child {
+            position: relative;
+        }
+        .qq-tooltip {
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%) translateY(-10px);
+            background: var(--card-bg);
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-size: 16px;
+            font-weight: 500;
+            white-space: nowrap;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+            pointer-events: auto;  /* 允许用户复制QQ号 */
+            z-index: 10;
+        }
+        .qq-tooltip.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
     </style>
 </head>
 <body>
 
     <nav>
         <div class="logo">千凝</div>
+        <!-- 已删除右上角两个链接 -->
     </nav>
 
     <header class="hero">
         <h1 class="reveal">看见，<br>即刻<span class="highlight">触发</span>。</h1>
-        <p class="reveal" style="transition-delay: 0.1s;">基于视觉识别与无障碍辅助的安卓自动化引擎。<br>正在由开发者“叶宁”倾力打造中。</p>
-        <div class="reveal" style="transition-delay: 0.2s; margin-top: 30px;">
-            <a href="#" class="cta-btn">加入开发内测预约</a>
+        <p class="reveal">基于视觉识别与无障碍辅助的下一代安卓自动化引擎。</p>
+        <!-- 修改点：在按钮容器内添加了qq-tooltip元素，用于展示QQ号 -->
+        <div class="reveal">
+            <a href="#" class="cta-btn">加入内测计划</a>
+            <div class="qq-tooltip">QQ群：1084129729</div>
         </div>
     </header>
 
     <section class="demo-section reveal">
         <div class="phone-mockup">
+            <div class="screen-content">
+                <div class="mock-item"></div>
+                <div class="mock-item short"></div>
+                <div class="mock-item"></div>
+            </div>
             <div class="target-img"></div>
             <div class="scanner-line"></div>
             <div class="click-ripple"></div>
@@ -67,29 +126,31 @@
     </section>
 
     <section class="features">
-        <div class="feature-card reveal">
-            <h3>👁️ 视觉识图捕捉</h3>
-            <p>通过系统屏幕采集权限实时监控画面。核心识别逻辑本地运算，不仅响应迅速，更能精准锁定您设定的目标元素。</p>
-        </div>
-        <div class="feature-card reveal" style="transition-delay: 0.1s;">
-            <h3>⚡ 无障碍精准操控</h3>
-            <p>调用 Android 系统级无障碍服务，实现像素级的点击与交互执行，确保脚本执行的准确性与稳定性。</p>
-        </div>
-        <div class="feature-card reveal" style="transition-delay: 0.2s;">
-            <h3>🛠️ 开发中 · 敬请期待</h3>
-            <p>“千凝”正处于核心功能打磨阶段，我们将通过极致的技术实现，为您带来前所未有的手机自动化体验。</p>
-        </div>
+        <div class="feature-card reveal"><h3>👁️ 实时视觉捕捉</h3><p>利用屏幕采集权限，实现对目标的精准视觉识别。</p></div>
+        <div class="feature-card reveal"><h3>⚡ 无障碍精准操控</h3><p>调用原生无障碍服务，实现像素级的点击执行，确保操作稳定可靠。</p></div>
+        <div class="feature-card reveal"><h3>🔒 隐私保障</h3><p>用户隐私数据均不会被保存</p></div>
     </section>
 
-    <footer style="text-align: center; padding: 40px; color: var(--text-muted);">
-        <p>© 2026 千凝 (QianNing). All rights reserved. | 开发者：叶宁</p>
-    </footer>
+    <footer><p>© 2026 千凝 (QianNing). All rights reserved. | 开发者：叶宁</p></footer>
 
     <script>
+        // 原有的滚动显示动画
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
         }, { threshold: 0.1 });
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // 新增：点击按钮切换QQ号显示，动画丝滑
+        document.addEventListener('DOMContentLoaded', function() {
+            const btn = document.querySelector('.cta-btn');
+            const tooltip = document.querySelector('.qq-tooltip');
+            if (btn && tooltip) {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();              // 阻止#链接的默认跳转
+                    tooltip.classList.toggle('show'); // 切换显示类，触发过渡动画
+                });
+            }
+        });
     </script>
 </body>
 </html>
